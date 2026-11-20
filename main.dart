@@ -4,13 +4,14 @@ import 'dart:math';
 void main() {
   runApp(const MaterialApp(
     home: Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: TextDirection.rtl, // لدعم اللغة العربية
       child: StartScreen(),
     ),
     debugShowCheckedModeBanner: false,
   ));
 }
 
+// ================== شاشة البداية ==================
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
 
@@ -44,6 +45,7 @@ class StartScreen extends StatelessWidget {
   }
 }
 
+// ================== شاشة اللعبة ==================
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
@@ -129,12 +131,12 @@ class _GameScreenState extends State<GameScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context);
+              Navigator.pop(context); 
             },
             child: const Text('القائمة الرئيسية'),
           )
         ],
-      ),
+      )
     );
   }
 
@@ -149,7 +151,7 @@ class _GameScreenState extends State<GameScreen> {
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.green[800],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12)
             ),
             child: Column(
               children: [
@@ -158,12 +160,12 @@ class _GameScreenState extends State<GameScreen> {
                   child: Row(
                     children: [
                       Expanded(child: col(engine.players[3])),
-                      Expanded(child: col(engine.players[1])),
-                    ],
-                  ),
+                      Expanded(child: col(engine.players[1]))
+                    ]
+                  )
                 ),
                 Expanded(child: row(engine.players[0])),
-              ],
+              ]
             ),
           ),
           Expanded(
@@ -174,7 +176,7 @@ class _GameScreenState extends State<GameScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     color: Colors.blue[50],
-                    child: Text(message, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text(message, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
                   ),
                   if (waitingForDraw && engine.current.isHuman)
                     Padding(
@@ -184,14 +186,14 @@ class _GameScreenState extends State<GameScreen> {
                         children: [
                           ElevatedButton(
                             onPressed: () => draw(false),
-                            child: Text('اسحب من الكومة (${engine.deck.length})'),
+                            child: Text('اسحب من الكومة (${engine.deck.length})')
                           ),
                           ElevatedButton(
                             onPressed: engine.discard.length > 1 ? () => draw(true) : null,
-                            child: Text('من المرمية (${engine.discard.last.label})'),
+                            child: Text('من المرمية (${engine.discard.last.label})')
                           ),
-                        ],
-                      ),
+                        ]
+                      )
                     ),
                   if (!waitingForDraw && engine.current.isHuman) ...[
                     const SizedBox(height: 8),
@@ -205,11 +207,11 @@ class _GameScreenState extends State<GameScreen> {
                           decoration: BoxDecoration(
                             color: selectedCard == c ? Colors.yellow : Colors.white,
                             border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(6)
                           ),
                           child: Text(c.label, style: TextStyle(fontSize: 20, color: c.isRed ? Colors.red : Colors.black)),
                         ),
-                      )).toList(),
+                      )).toList()
                     ),
                     const SizedBox(height: 8),
                     ...moves.map((m) => Padding(
@@ -221,16 +223,16 @@ class _GameScreenState extends State<GameScreen> {
                               ? 'أخرج بيدق ${m.pawnIndex + 1}'
                               : m.type == MoveType.advance
                                   ? 'حرّك بيدق ${m.pawnIndex + 1} بـ ${m.card.forwardSteps}'
-                                  : 'بدّل بيدق ${m.pawnIndex + 1} مع خصم ${m.otherPawnIndex! + 1}',
+                                  : 'بدّل بيدق ${m.pawnIndex + 1} مع خصم ${m.otherPawnIndex! + 1}'
                         ),
-                      ),
+                      )
                     )),
                   ],
-                ],
-              ),
-            ),
+                ]
+              )
+            )
           ),
-        ],
+        ]
       ),
     );
   }
@@ -247,14 +249,14 @@ class _GameScreenState extends State<GameScreen> {
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: pw.isHome ? Colors.amber : pw.isInHomeStretch ? Colors.orange : pw.isOnTrack ? Colors.blue : Colors.grey,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4)
           ),
           child: Text(
             pw.isInBase ? '🏠' : pw.isHome ? '🏁' : '${pw.progress}',
-            style: const TextStyle(fontSize: 10, color: Colors.white),
-          ),
+            style: const TextStyle(fontSize: 10, color: Colors.white)
+          )
         )),
-      ],
+      ]
     ),
   );
 
@@ -271,36 +273,37 @@ class _GameScreenState extends State<GameScreen> {
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               color: pw.isHome ? Colors.amber : pw.isInHomeStretch ? Colors.orange : pw.isOnTrack ? Colors.blue : Colors.grey,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(4)
             ),
             child: Text(
               pw.isInBase ? '🏠' : pw.isHome ? '🏁' : '${pw.progress}',
-              style: const TextStyle(fontSize: 9, color: Colors.white),
-            ),
-          )).toList(),
+              style: const TextStyle(fontSize: 9, color: Colors.white)
+            )
+          )).toList()
         ),
-      ],
+      ]
     ),
   );
 }
 
+// ================== منطق اللعبة ==================
 enum Suit { hearts, diamonds, clubs, spades, joker }
 
 class GameCard {
-  final Suit suit;
-  final int rank;
+  final Suit suit; 
+  final int rank; 
   final bool isJoker;
-
+  
   const GameCard(this.suit, this.rank, {this.isJoker = false});
   factory GameCard.joker() => const GameCard(Suit.joker, 0, isJoker: true);
-
+  
   String get label {
     if (isJoker) return '🃏';
     final r = {1: 'A', 11: 'J', 12: 'Q', 13: 'K'}[rank]?.toString() ?? '$rank';
     final s = {Suit.hearts: '♥', Suit.diamonds: '♦', Suit.clubs: '♣', Suit.spades: '♠'}[suit]!;
     return '$r$s';
   }
-
+  
   int get forwardSteps => isJoker ? 13 : (rank == 4 ? -4 : rank);
   bool get canExitBase => isJoker || rank == 1 || rank == 13;
   bool get isJack => !isJoker && rank == 11;
@@ -319,12 +322,12 @@ class Pawn {
 }
 
 class Player {
-  final String name;
-  final int index;
+  final String name; 
+  final int index; 
   final bool isHuman;
   final List<Pawn> pawns = List.generate(4, (_) => Pawn());
   final List<GameCard> hand = [];
-
+  
   Player({required this.name, required this.index, required this.isHuman});
   int get startPos => index * 13;
 }
@@ -332,20 +335,20 @@ class Player {
 enum MoveType { exitBase, advance, swap }
 
 class Move {
-  final MoveType type;
-  final Player player;
+  final MoveType type; 
+  final Player player; 
   final int pawnIndex;
-  final GameCard card;
-  final Player? other;
+  final GameCard card; 
+  final Player? other; 
   final int? otherPawnIndex;
-
+  
   Move({
-    required this.type,
-    required this.player,
+    required this.type, 
+    required this.player, 
     required this.pawnIndex,
-    required this.card,
-    this.other,
-    this.otherPawnIndex,
+    required this.card, 
+    this.other, 
+    this.otherPawnIndex
   });
 }
 
@@ -374,11 +377,11 @@ class GameEngine {
         deck.add(GameCard(s, rk));
       }
     }
-    deck.add(GameCard.joker());
+    deck.add(GameCard.joker()); 
     deck.add(GameCard.joker());
     deck.shuffle(r);
     discard.clear();
-
+    
     for (var p in players) {
       p.hand.clear();
       for (var i = 0; i < 5; i++) {
@@ -391,24 +394,24 @@ class GameEngine {
     discard.add(deck.removeLast());
   }
 
-  void drawFromDeck() {
-    if (deck.isEmpty) return;
-    current.hand.add(deck.removeLast());
+  void drawFromDeck() { 
+    if (deck.isEmpty) return; 
+    current.hand.add(deck.removeLast()); 
   }
-
-  void drawFromDiscard() {
-    if (discard.length > 1) current.hand.add(discard.removeLast());
+  
+  void drawFromDiscard() { 
+    if (discard.length > 1) current.hand.add(discard.removeLast()); 
   }
-
-  void discardCard(GameCard c) {
-    current.hand.remove(c);
-    discard.add(c);
+  
+  void discardCard(GameCard c) { 
+    current.hand.remove(c); 
+    discard.add(c); 
   }
 
   List<Move> validMoves(GameCard c) {
-    final m = <Move>[];
+    final m = <Move>[]; 
     final p = current;
-
+    
     if (c.canExitBase) {
       for (var i = 0; i < p.pawns.length; i++) {
         if (p.pawns[i].isInBase) {
@@ -416,7 +419,7 @@ class GameEngine {
         }
       }
     }
-
+    
     if (c.isJack) {
       for (var i = 0; i < p.pawns.length; i++) {
         if (p.pawns[i].isOnTrack && p.pawns[i].canAdvance(11)) {
@@ -425,7 +428,7 @@ class GameEngine {
       }
       for (var i = 0; i < p.pawns.length; i++) {
         if (p.pawns[i].isOnTrack) {
-          for (var op in players) {
+          for (var op in players) { 
             if (op.index == p.index) continue;
             for (var j = 0; j < op.pawns.length; j++) {
               if (op.pawns[j].isOnTrack) {
@@ -449,28 +452,29 @@ class GameEngine {
 
   void applyMove(Move mv) {
     switch (mv.type) {
-      case MoveType.exitBase:
-        mv.player.pawns[mv.pawnIndex].progress = 0;
+      case MoveType.exitBase: 
+        mv.player.pawns[mv.pawnIndex].progress = 0; 
         break;
-      case MoveType.advance:
-        mv.player.pawns[mv.pawnIndex].advance(mv.card.forwardSteps);
+      case MoveType.advance: 
+        mv.player.pawns[mv.pawnIndex].advance(mv.card.forwardSteps); 
         break;
       case MoveType.swap:
-        final a = mv.player.pawns[mv.pawnIndex];
-        final b = mv.other!.pawns[mv.otherPawnIndex!];
-        final aAbs = (mv.player.startPos + a.progress) % 52;
-        final bAbs = (mv.other!.startPos + b.progress) % 52;
-        a.progress = (bAbs - mv.player.startPos + 52) % 52;
-        b.progress = (aAbs - mv.other.startPos + 52) % 52;
+        final otherPlayer = mv.other!; // إصلاح الخطأ هنا
+        final a = mv.player.pawns[mv.pawnIndex]; 
+        final b = otherPlayer.pawns[mv.otherPawnIndex!];
+        final aAbs = (mv.player.startPos + a.progress) % 52; 
+        final bAbs = (otherPlayer.startPos + b.progress) % 52;
+        a.progress = (bAbs - mv.player.startPos + 52) % 52; 
+        b.progress = (aAbs - otherPlayer.startPos + 52) % 52;
         break;
     }
-    mv.player.hand.remove(mv.card);
+    mv.player.hand.remove(mv.card); 
     discard.add(mv.card);
-
+    
     for (var t = 0; t < 2; t++) {
       if (players[t].pawns.every((p) => p.isHome) && players[t + 2].pawns.every((p) => p.isHome)) {
-        gameOver = true;
-        winnerTeam = t;
+        gameOver = true; 
+        winnerTeam = t; 
         return;
       }
     }
@@ -479,7 +483,7 @@ class GameEngine {
   void endTurn() => currentIndex = (currentIndex + 1) % 4;
 
   Move? aiChooseMove() {
-    Move? best;
+    Move? best; 
     int score = -999999;
     for (var c in current.hand) {
       for (var mv in validMoves(c)) {
@@ -490,13 +494,14 @@ class GameEngine {
           s = current.pawns[mv.pawnIndex].progress + c.forwardSteps;
           if (current.pawns[mv.pawnIndex].progress + c.forwardSteps == 57) s += 10000;
           if (c.forwardSteps < 0) s -= 200;
-        } else {
-          s = mv.other!.pawns[mv.otherPawnIndex!].progress - current.pawns[mv.pawnIndex].progress + 100;
+        } else if (mv.type == MoveType.swap) { // إصلاح ثاني هنا
+          final otherPlayer = mv.other!;
+          s = otherPlayer.pawns[mv.otherPawnIndex!].progress - current.pawns[mv.pawnIndex].progress + 100;
         }
         s += r.nextInt(40);
-        if (s > score) {
-          score = s;
-          best = mv;
+        if (s > score) { 
+          score = s; 
+          best = mv; 
         }
       }
     }
